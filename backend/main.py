@@ -1222,20 +1222,30 @@ async def request_timing_middleware(request: Request, call_next):
 def _startup_load_catalogs() -> None:
     global SOURCE_STORE, _CATALOG_SOURCES_SIGNATURE
 
-    create_tables()
-    print("[startup] loading catalogs")
-    _log_kohler_runtime_paths()
-    current_signature = _catalog_sources_signature()
-    cached_store = _load_runtime_catalog_cache(current_signature)
-    if cached_store is not None:
-        SOURCE_STORE = cached_store
-        _CATALOG_SOURCES_SIGNATURE = current_signature
-    else:
-        SOURCE_STORE = load_catalogs()
-        _CATALOG_SOURCES_SIGNATURE = _catalog_sources_signature()
-        _save_runtime_catalog_cache(SOURCE_STORE, _CATALOG_SOURCES_SIGNATURE)
-    _resolve_existing_image_path_cached.cache_clear()
-    print("[startup] catalog counts:", {source_key: len(store.get("catalog", [])) for source_key, store in SOURCE_STORE.items()})
+    try:
+        print("[startup] initializing database")
+        create_tables()
+    except Exception as e:
+        print(f"[startup] DATABASE ERROR: {e}")
+        # Don't crash the whole app, just log it.
+        pass
+
+    try:
+        print("[startup] loading catalogs")
+        _log_kohler_runtime_paths()
+        current_signature = _catalog_sources_signature()
+        cached_store = _load_runtime_catalog_cache(current_signature)
+        if cached_store is not None:
+            SOURCE_STORE = cached_store
+            _CATALOG_SOURCES_SIGNATURE = current_signature
+        else:
+            SOURCE_STORE = load_catalogs()
+            _CATALOG_SOURCES_SIGNATURE = _catalog_sources_signature()
+            _save_runtime_catalog_cache(SOURCE_STORE, _CATALOG_SOURCES_SIGNATURE)
+        _resolve_existing_image_path_cached.cache_clear()
+        print("[startup] catalog counts:", {source_key: len(store.get("catalog", [])) for source_key, store in SOURCE_STORE.items()})
+    except Exception as e:
+        print(f"[startup] CATALOG ERROR: {e}")
 
 
 def _ensure_catalogs_loaded() -> None:
