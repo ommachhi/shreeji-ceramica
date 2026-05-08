@@ -1,4 +1,4 @@
-# Exclude large source files not needed at runtime
+# Exclude heavy Excel/PDF files
 backend/Kohler.pdf
 backend/*.xlsx
 backend/*.csv
@@ -12,3 +12,6 @@ node_modules
 .github
 *.ps1
 test_db_connection.py
+
+# ENSURE JSON CACHES ARE INCLUDED
+!backend/*.json
