@@ -29,7 +29,7 @@ from runtime_paths import get_backend_base_dir
 BASE_DIR = get_backend_base_dir()
 KOHLER_CACHE_PATH = os.path.join(str(BASE_DIR), "kohler_cache.json")
 KOHLER_EXCEL_PATH = os.path.join(str(BASE_DIR), "kohler_catalog_full.xlsx")
-USE_CACHE = False
+USE_CACHE = True
 IS_VERCEL = os.environ.get("VERCEL", "").strip().lower() in {"1", "true", "yes"}
 IMAGES_DIR = Path(DEFAULT_IMAGES_DIR)
 if not IS_VERCEL:
@@ -1078,7 +1078,7 @@ def _load_runtime_catalog_cache(signature: tuple) -> dict[str, dict] | None:
         return None
 
     cached_signature = payload.get("signature")
-    if cached_signature != _signature_to_json(signature):
+    if not IS_VERCEL and cached_signature != _signature_to_json(signature):
         return None
 
     catalogs = payload.get("catalogs")
