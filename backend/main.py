@@ -30,8 +30,10 @@ BASE_DIR = get_backend_base_dir()
 KOHLER_CACHE_PATH = os.path.join(str(BASE_DIR), "kohler_cache.json")
 KOHLER_EXCEL_PATH = os.path.join(str(BASE_DIR), "kohler_catalog_full.xlsx")
 USE_CACHE = False
+IS_VERCEL = os.environ.get("VERCEL", "").strip().lower() in {"1", "true", "yes"}
 IMAGES_DIR = Path(DEFAULT_IMAGES_DIR)
-IMAGES_DIR.mkdir(parents=True, exist_ok=True)
+if not IS_VERCEL:
+    IMAGES_DIR.mkdir(parents=True, exist_ok=True)
 WINDOWS_FORBIDDEN_SEGMENT_CHARS = set('<>:"\\|?*')
 
 KOHLER_NO_IMAGE_CODES = {
@@ -293,7 +295,7 @@ ENABLE_IMAGE_VALIDATION = os.environ.get("ENABLE_IMAGE_VALIDATION", "").strip().
     "true",
     "yes",
 }
-RUNTIME_CATALOG_CACHE_PATH = BASE_DIR / ".runtime_catalog_cache.json"
+RUNTIME_CATALOG_CACHE_PATH = (Path("/tmp") if IS_VERCEL else BASE_DIR) / ".runtime_catalog_cache.json"
 
 
 def _cors_origins_from_env() -> tuple[list[str], str | None, bool]:

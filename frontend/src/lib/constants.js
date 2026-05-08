@@ -1,7 +1,7 @@
 const defaultBackendUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:8001"
-    : "https://shriji-tiles.onrender.com";
+    : (typeof window !== "undefined" ? window.location.origin + "/api" : "https://shriji-tiles.onrender.com");
 
 const runtimeBackendUrl =
   (typeof window !== "undefined" && window.desktopConfig?.backendUrl) ||
