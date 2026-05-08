@@ -1,0 +1,14 @@
+# Exclude large source files not needed at runtime
+backend/Kohler.pdf
+backend/*.xlsx
+backend/*.csv
+
+# Exclude local caches and environments
+backend/venv
+backend/__pycache__
+backend/.pytest_cache
+node_modules
+.git
+.github
+*.ps1
+test_db_connection.py
